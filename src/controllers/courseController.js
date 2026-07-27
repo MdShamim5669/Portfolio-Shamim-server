@@ -1,11 +1,9 @@
-import prisma from '../config/db.js';
-import { sendError, sendSuccess } from '../utils/apiResponse.js';
+import { courseService } from '../services/courseService.js';
+import { sendSuccess } from '../utils/apiResponse.js';
 
 export const getCourses = async (req, res, next) => {
   try {
-    const courses = await prisma.course.findMany({
-      orderBy: { order: 'asc' },
-    });
+    const courses = await courseService.getAllCourses();
     return sendSuccess(res, 'Courses retrieved', courses);
   } catch (error) {
     next(error);
@@ -14,7 +12,7 @@ export const getCourses = async (req, res, next) => {
 
 export const createCourse = async (req, res, next) => {
   try {
-    const course = await prisma.course.create({ data: req.body });
+    const course = await courseService.createCourse(req.body);
     return sendSuccess(res, 'Course created', course, 201);
   } catch (error) {
     next(error);
@@ -24,7 +22,7 @@ export const createCourse = async (req, res, next) => {
 export const deleteCourse = async (req, res, next) => {
   try {
     const { id } = req.params;
-    await prisma.course.delete({ where: { id } });
+    await courseService.deleteCourse(id);
     return sendSuccess(res, 'Course deleted');
   } catch (error) {
     next(error);

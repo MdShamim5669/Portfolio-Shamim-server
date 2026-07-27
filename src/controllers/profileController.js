@@ -1,9 +1,9 @@
-import prisma from '../config/db.js';
-import { sendError, sendSuccess } from '../utils/apiResponse.js';
+import { profileService } from '../services/profileService.js';
+import { sendSuccess } from '../utils/apiResponse.js';
 
 export const getProfile = async (req, res, next) => {
   try {
-    const profile = await prisma.profile.findFirst();
+    const profile = await profileService.getProfile();
     return sendSuccess(res, 'Profile retrieved successfully', profile);
   } catch (error) {
     next(error);
@@ -12,16 +12,7 @@ export const getProfile = async (req, res, next) => {
 
 export const updateProfile = async (req, res, next) => {
   try {
-    const profile = await prisma.profile.findFirst();
-    if (!profile) {
-      const newProfile = await prisma.profile.create({ data: req.body });
-      return sendSuccess(res, 'Profile created', newProfile, 201);
-    }
-
-    const updated = await prisma.profile.update({
-      where: { id: profile.id },
-      data: req.body,
-    });
+    const updated = await profileService.updateProfile(req.body);
     return sendSuccess(res, 'Profile updated successfully', updated);
   } catch (error) {
     next(error);

@@ -1,11 +1,9 @@
-import prisma from '../config/db.js';
-import { sendError, sendSuccess } from '../utils/apiResponse.js';
+import { experienceService } from '../services/experienceService.js';
+import { sendSuccess } from '../utils/apiResponse.js';
 
 export const getExperiences = async (req, res, next) => {
   try {
-    const experiences = await prisma.experience.findMany({
-      orderBy: { order: 'asc' },
-    });
+    const experiences = await experienceService.getAllExperiences();
     return sendSuccess(res, 'Experiences retrieved', experiences);
   } catch (error) {
     next(error);
@@ -14,7 +12,7 @@ export const getExperiences = async (req, res, next) => {
 
 export const createExperience = async (req, res, next) => {
   try {
-    const exp = await prisma.experience.create({ data: req.body });
+    const exp = await experienceService.createExperience(req.body);
     return sendSuccess(res, 'Experience created', exp, 201);
   } catch (error) {
     next(error);
@@ -24,7 +22,7 @@ export const createExperience = async (req, res, next) => {
 export const deleteExperience = async (req, res, next) => {
   try {
     const { id } = req.params;
-    await prisma.experience.delete({ where: { id } });
+    await experienceService.deleteExperience(id);
     return sendSuccess(res, 'Experience deleted');
   } catch (error) {
     next(error);
