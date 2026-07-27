@@ -23,4 +23,9 @@ export const uploadService = {
       bytes: result.bytes,
     };
   },
+
+  deleteFileFromCloudinary: async (publicId) => {
+    if (!publicId) return null;
+    return await cloudinary.uploader.destroy(publicId);
+  },
 };
