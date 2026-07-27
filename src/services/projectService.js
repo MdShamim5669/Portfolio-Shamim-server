@@ -3,7 +3,6 @@ import prisma from '../config/db.js';
 
 const extractPublicIdFromUrl = (url) => {
   if (!url || typeof url !== 'string') return null;
-  // Match Cloudinary URL pattern: samim_portfolio/...
   const regex = /(samim_portfolio\/[^.]+)/;
   const match = url.match(regex);
   return match ? match[1] : null;
@@ -21,6 +20,33 @@ export const projectService = {
   },
 
   updateProject: async (id, data) => {
+    const existing = await prisma.project.findUnique({ where: { id } });
+    if (existing) {
+      // If new thumbnail image is provided and replaces old one, destroy old Cloudinary asset
+      if (data.thumbnailUrl && data.thumbnailUrl !== existing.thumbnailUrl) {
+        const oldPublicId = extractPublicIdFromUrl(existing.thumbnailUrl);
+        if (oldPublicId) {
+          try {
+            await cloudinary.uploader.destroy(oldPublicId);
+          } catch (err) {
+            console.error('Cloudinary Old Thumbnail Cleanup Error:', err);
+          }
+        }
+      }
+
+      // If new video is provided and replaces old one, destroy old Cloudinary video asset
+      if (data.videoDemoUrl && data.videoDemoUrl !== existing.videoDemoUrl) {
+        const oldVideoPublicId = extractPublicIdFromUrl(existing.videoDemoUrl);
+        if (oldVideoPublicId) {
+          try {
+            await cloudinary.uploader.destroy(oldVideoPublicId, { resource_type: 'video' });
+          } catch (err) {
+            console.error('Cloudinary Old Video Cleanup Error:', err);
+          }
+        }
+      }
+    }
+
     return await prisma.project.update({
       where: { id },
       data,
