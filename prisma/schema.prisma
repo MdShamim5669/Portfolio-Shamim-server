@@ -42,6 +42,7 @@ model Profile {
   cgpa        Float    @default(3.55)
   university  String   @default("Daffodil International University")
   degree      String   @default("Bachelor of Science in Computer Science & Engineering")
+  profilePicUrl String?
   githubUrl   String?
   linkedinUrl String?
   resumeUrl   String?
