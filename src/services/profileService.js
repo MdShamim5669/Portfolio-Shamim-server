@@ -21,6 +21,7 @@ export const profileService = {
       'university',
       'degree',
       'profilePicUrl',
+      'educationPicUrl',
       'githubUrl',
       'linkedinUrl',
       'resumeUrl',
