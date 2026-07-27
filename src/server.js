@@ -18,11 +18,13 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// CORS setup
-const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
+// Permissive CORS setup for deployment flexibility
 app.use(
   cors({
-    origin: [clientUrl, 'http://localhost:5173', 'http://127.0.0.1:5173'],
+    origin: (origin, callback) => {
+      // Allow requests from any origin (Vercel, Localhost, Netlify, mobile, etc.)
+      callback(null, true);
+    },
     credentials: true,
   })
 );
@@ -31,6 +33,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Basic Health Check Route
+app.get('/', (req, res) => {
+  res.json({
+    status: 'OK',
+    message: 'Md. Samim Portfolio Backend API is operational',
+    timestamp: new Date().toISOString(),
+  });
+});
+
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'OK',
@@ -54,6 +64,5 @@ app.use('/api/upload', uploadRoutes);
 app.use(errorHandler);
 
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-  console.log(`📡 CORS allowed origin: ${clientUrl}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });
