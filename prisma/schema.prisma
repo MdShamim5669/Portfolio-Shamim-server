@@ -1,0 +1,130 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  ADMIN
+  VIEWER
+}
+
+enum SkillCategory {
+  LANGUAGES
+  FRONTEND
+  BACKEND
+  DATABASES
+  ML_AI
+  TOOLS
+  AI_TOOLS
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  role      Role     @default(ADMIN)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Profile {
+  id          String   @id @default(uuid())
+  fullName    String   @default("Md. Samim")
+  title       String   @default("AI & Backend Engineer")
+  bio         String
+  email       String
+  phone       String
+  location    String   @default("Dhaka, Bangladesh")
+  cgpa        Float    @default(3.55)
+  university  String   @default("Daffodil International University")
+  degree      String   @default("Bachelor of Science in Computer Science & Engineering")
+  githubUrl   String?
+  linkedinUrl String?
+  resumeUrl   String?
+  updatedAt   DateTime @updatedAt
+}
+
+model Skill {
+  id          String        @id @default(uuid())
+  name        String
+  category    SkillCategory
+  proficiency Int           @default(80)
+  iconName    String?
+  order       Int           @default(0)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model Project {
+  id              String   @id @default(uuid())
+  title           String
+  tagline         String
+  description     String
+  techStack       String[]
+  liveDemoUrl     String?
+  clientGithubUrl String?
+  serverGithubUrl String?
+  thumbnailUrl    String?
+  videoDemoUrl    String?
+  isFeatured      Boolean  @default(true)
+  order           Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Thesis {
+  id          String   @id @default(uuid())
+  title       String
+  summary     String
+  accuracy    Float    @default(84.4)
+  modelName   String   @default("Random Forest")
+  datasetSize Int      @default(317)
+  techStack   String[]
+  githubUrl   String?
+  paperUrl    String?
+  highlights  String[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Experience {
+  id          String   @id @default(uuid())
+  role        String
+  company     String
+  location    String?
+  startDate   String
+  endDate     String
+  isCurrent   Boolean  @default(false)
+  description String?
+  highlights  String[]
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Course {
+  id           String   @id @default(uuid())
+  title        String
+  subtitle     String?
+  platform     String   @default("Udemy")
+  creatorRole  String   @default("AI Content Developer at ALGORIZIN")
+  courseUrl    String?
+  thumbnailUrl String?
+  order        Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  subject   String?
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
