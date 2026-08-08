@@ -1,6 +1,7 @@
 import express from 'express';
 import {
   createCourse,
+  updateCourse,
   deleteCourse,
   getCourses,
 } from '../controllers/courseController.js';
@@ -10,6 +11,7 @@ const router = express.Router();
 
 router.get('/', getCourses);
 router.post('/', verifyToken, requireAdmin, createCourse);
+router.put('/:id', verifyToken, requireAdmin, updateCourse);
 router.delete('/:id', verifyToken, requireAdmin, deleteCourse);
 
 export default router;

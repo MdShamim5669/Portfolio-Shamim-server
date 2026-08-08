@@ -19,6 +19,16 @@ export const createCourse = async (req, res, next) => {
   }
 };
 
+export const updateCourse = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const course = await courseService.updateCourse(id, req.body);
+    return sendSuccess(res, 'Course updated', course);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const deleteCourse = async (req, res, next) => {
   try {
     const { id } = req.params;
