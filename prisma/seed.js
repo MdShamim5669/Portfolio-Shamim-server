@@ -154,45 +154,6 @@ async function main() {
   }
   console.log(`✅ ${cvData.courses.length} Udemy Courses Seeded`);
 
-  // 8. Seed Campus Moments
-  await prisma.campusMoment.deleteMany();
-  const sampleMoments = [
-    {
-      title: 'DIU Smart Campus & Engineering Complex',
-      category: 'Campus Life',
-      description: 'Collaborating and studying full-stack software architectures at Daffodil International University Smart Campus.',
-      imageUrls: [
-        'https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?auto=format&fit=crop&w=1200&q=80',
-        'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1200&q=80',
-      ],
-      order: 1,
-    },
-    {
-      title: 'CSE Project Fair & Research Showcase',
-      category: 'Research & Events',
-      description: 'Presenting machine learning research models and distributed web application projects at university symposiums.',
-      imageUrls: [
-        'https://images.unsplash.com/photo-1523580494863-6f3031224c94?auto=format&fit=crop&w=1200&q=80',
-        'https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=1200&q=80',
-      ],
-      order: 2,
-    },
-    {
-      title: 'Academic Honor & Engineering Graduation',
-      category: 'Milestones',
-      description: 'Celebrating four years of Computer Science & Engineering academic milestones with peers and faculty.',
-      imageUrls: [
-        'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1200&q=80',
-      ],
-      order: 3,
-    },
-  ];
-
-  for (const m of sampleMoments) {
-    await prisma.campusMoment.create({ data: m });
-  }
-  console.log(`✅ ${sampleMoments.length} Campus Moments Seeded`);
-
   console.log('🎉 Seeding Completed Successfully!');
 }
 
