@@ -130,3 +130,14 @@ model Message {
   isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
 }
+
+model CampusMoment {
+  id          String   @id @default(uuid())
+  title       String
+  category    String   @default("Campus Life")
+  description String?
+  imageUrls   String[]
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

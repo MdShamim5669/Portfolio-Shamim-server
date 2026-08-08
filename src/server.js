@@ -12,6 +12,7 @@ import projectRoutes from './routes/projectRoutes.js';
 import skillRoutes from './routes/skillRoutes.js';
 import thesisRoutes from './routes/thesisRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
+import campusMomentRoutes from './routes/campusMomentRoutes.js';
 
 dotenv.config();
 
@@ -59,6 +60,7 @@ app.use('/api/courses', courseRoutes);
 app.use('/api/experience', experienceRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/campus-moments', campusMomentRoutes);
 
 // Global Error Handler Middleware
 app.use(errorHandler);
