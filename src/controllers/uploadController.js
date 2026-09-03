@@ -3,7 +3,8 @@ import { sendError, sendSuccess } from '../utils/apiResponse.js';
 
 export const uploadFile = async (req, res, next) => {
   try {
-    const data = await uploadService.uploadFileToCloudinary(req.file);
+    const folder = req.body?.folder || req.query?.folder || 'Portfolio';
+    const data = await uploadService.uploadFileToCloudinary(req.file, folder);
     return sendSuccess(res, 'File uploaded to Cloudinary successfully', data);
   } catch (error) {
     console.error('Cloudinary Upload Error:', error);

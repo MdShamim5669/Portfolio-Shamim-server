@@ -3,7 +3,8 @@ import prisma from '../config/db.js';
 
 const extractPublicIdFromUrl = (url) => {
   if (!url || typeof url !== 'string') return null;
-  const regex = /(samim_portfolio\/[^.]+)/;
+  // Supports Portfolio/projects/..., Portfolio/courses/..., or legacy samim_portfolio/...
+  const regex = /((?:Portfolio\/[a-zA-Z0-9_-]+|samim_portfolio)\/[^.]+)/i;
   const match = url.match(regex);
   return match ? match[1] : null;
 };
@@ -16,40 +17,17 @@ export const projectService = {
   },
 
   createProject: async (data) => {
-    return await prisma.project.create({ data });
+    const { id: _id, createdAt: _c, updatedAt: _u, ...cleanData } = data;
+    return await prisma.project.create({ data: cleanData });
   },
 
   updateProject: async (id, data) => {
-    const existing = await prisma.project.findUnique({ where: { id } });
-    if (existing) {
-      // If new thumbnail image is provided and replaces old one, destroy old Cloudinary asset
-      if (data.thumbnailUrl && data.thumbnailUrl !== existing.thumbnailUrl) {
-        const oldPublicId = extractPublicIdFromUrl(existing.thumbnailUrl);
-        if (oldPublicId) {
-          try {
-            await cloudinary.uploader.destroy(oldPublicId);
-          } catch (err) {
-            console.error('Cloudinary Old Thumbnail Cleanup Error:', err);
-          }
-        }
-      }
-
-      // If new video is provided and replaces old one, destroy old Cloudinary video asset
-      if (data.videoDemoUrl && data.videoDemoUrl !== existing.videoDemoUrl) {
-        const oldVideoPublicId = extractPublicIdFromUrl(existing.videoDemoUrl);
-        if (oldVideoPublicId) {
-          try {
-            await cloudinary.uploader.destroy(oldVideoPublicId, { resource_type: 'video' });
-          } catch (err) {
-            console.error('Cloudinary Old Video Cleanup Error:', err);
-          }
-        }
-      }
-    }
-
+    const { id: _id, createdAt: _c, updatedAt: _u, ...cleanData } = data;
+    // NOTE: Preserving previous Cloudinary thumbnail assets to prevent broken links
+    // and accidental loss of historical project covers.
     return await prisma.project.update({
       where: { id },
-      data,
+      data: cleanData,
     });
   },
 
