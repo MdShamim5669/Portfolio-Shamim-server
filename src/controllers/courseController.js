@@ -1,4 +1,5 @@
 import { courseService } from '../services/courseService.js';
+import { deleteCloudinaryAsset } from '../services/projectService.js';
 import { sendSuccess } from '../utils/apiResponse.js';
 
 export const getCourses = async (req, res, next) => {
@@ -15,6 +16,10 @@ export const createCourse = async (req, res, next) => {
     const course = await courseService.createCourse(req.body);
     return sendSuccess(res, 'Course created', course, 201);
   } catch (error) {
+    const thumb = req.body?.thumbnailUrl || req.body?.imageUrl;
+    if (thumb) {
+      deleteCloudinaryAsset(thumb).catch(console.error);
+    }
     next(error);
   }
 };
@@ -25,6 +30,10 @@ export const updateCourse = async (req, res, next) => {
     const course = await courseService.updateCourse(id, req.body);
     return sendSuccess(res, 'Course updated', course);
   } catch (error) {
+    const thumb = req.body?.thumbnailUrl || req.body?.imageUrl;
+    if (thumb) {
+      deleteCloudinaryAsset(thumb).catch(console.error);
+    }
     next(error);
   }
 };

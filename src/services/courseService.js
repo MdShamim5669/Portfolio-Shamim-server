@@ -1,4 +1,5 @@
 import prisma from '../config/db.js';
+import { deleteCloudinaryAsset } from './projectService.js';
 
 const sanitizeCourseData = (data = {}) => {
   const {
@@ -55,14 +56,30 @@ export const courseService = {
   },
 
   updateCourse: async (id, data) => {
+    const existing = await prisma.course.findUnique({ where: { id } });
     const updateData = sanitizeCourseData(data);
-    return await prisma.course.update({
+    const updated = await prisma.course.update({
       where: { id },
       data: updateData,
     });
+
+    // Destroy replaced old thumbnail after successful DB commit
+    if (updateData.thumbnailUrl && existing?.thumbnailUrl && updateData.thumbnailUrl !== existing.thumbnailUrl) {
+      deleteCloudinaryAsset(existing.thumbnailUrl).catch((err) => {
+        console.error('[Cloudinary] Failed to clean up old course thumbnail:', err);
+      });
+    }
+
+    return updated;
   },
 
   deleteCourse: async (id) => {
+    const existing = await prisma.course.findUnique({ where: { id } });
+    if (existing?.thumbnailUrl) {
+      deleteCloudinaryAsset(existing.thumbnailUrl).catch((err) => {
+        console.error('[Cloudinary] Failed to clean up course thumbnail on delete:', err);
+      });
+    }
     return await prisma.course.delete({
       where: { id },
     });
