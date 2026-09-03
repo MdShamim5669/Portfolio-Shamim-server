@@ -13,6 +13,9 @@ import skillRoutes from './routes/skillRoutes.js';
 import thesisRoutes from './routes/thesisRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
 
+import prisma from './config/db.js';
+import { initKeepAliveCron } from './services/cronService.js';
+
 dotenv.config();
 
 const app = express();
@@ -41,11 +44,28 @@ app.get('/', (req, res) => {
   });
 });
 
-app.get('/api/health', (req, res) => {
+app.get('/api/health', async (req, res) => {
+  let dbStatus = 'disconnected';
+  let dbLatencyMs = null;
+
+  try {
+    const start = Date.now();
+    await prisma.$queryRaw`SELECT 1`;
+    dbLatencyMs = Date.now() - start;
+    dbStatus = 'connected';
+  } catch (err) {
+    dbStatus = 'error: ' + err.message;
+  }
+
   res.json({
     status: 'OK',
     message: 'Md. Samim Portfolio Backend API is operational',
+    database: {
+      status: dbStatus,
+      latencyMs: dbLatencyMs,
+    },
     timestamp: new Date().toISOString(),
+    uptimeSeconds: Math.floor(process.uptime()),
   });
 });
 
@@ -65,4 +85,5 @@ app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
+  initKeepAliveCron();
 });
